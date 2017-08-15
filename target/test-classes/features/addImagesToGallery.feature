@@ -1,0 +1,1 @@
+Feature: scenarios containing user story: Add Images To Gallery

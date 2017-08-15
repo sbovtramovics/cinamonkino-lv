@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><testsuite failures="0" name="cucumber.runtime.formatter.JUnitFormatter" skipped="0" tests="1" time="28.862758">
+<testcase classname="Scenarios containing user story: Add New Album" name="New published Album test" time="28.862758">
+<system-out><![CDATA[Given Log in as admin.......................................................passed
+And Click on Photo Gallery button...........................................passed
+When Click on Albums button.................................................passed
+And click on Add New button.................................................passed
+And User input Album name: "Album1".........................................passed
+And User input Slug name: "Fun album".......................................passed
+And User input short description: "Short description".......................passed
+When User choses published option: "Yes"....................................passed
+When User clicks on preview image...........................................passed
+And User adds chosen picture................................................passed
+]]></system-out>
+</testcase>
+</testsuite>

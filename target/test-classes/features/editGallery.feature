@@ -1,0 +1,1 @@
+Feature: Scenarios containing user story: Edit Gallery
