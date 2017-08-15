@@ -11,7 +11,7 @@ import cucumber.api.junit.Cucumber;
                 "junit:cucumber-report/junit-report.xml",
                 "json:cucumber-report/json-report.json" },
         glue = { "stepDefinitions" },
-        tags = {"@MyTestScenario"})
+        tags = {"@MyMainTest"})
 public class CucumberRunner {
 
 }

@@ -1,1 +1,0 @@
-Feature: Scenarios containing user story: Add Album To Page Extend Album
