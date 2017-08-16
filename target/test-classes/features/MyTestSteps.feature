@@ -17,9 +17,17 @@ Feature:
     And I press submit button
     And I check that the Name is "Neo"
     And I check the the Surname is "Tech"
- #   And I press the Save button
-    And I go to the Films tab
-    And I select the random date 5 days from current date
+    # And I press the Save button
+    #And I go to the Films tab
+   # And I select the random date using 3 days interval from current date
+   # And I select the random film from the list
+   # And I select the random time of the film
+    And I select the film from the list
+    And I choose the time from the list
+    And I press booking button
+    And I add 2 tickets
+    And I type random text in coupon field
+    And I press validate button
 
 
   #  1. Sign in
