@@ -1,7 +1,6 @@
 Feature:
   Background:
     Given I go to the main page: "https://cinamonkino.lv/"
-    #Then gretrhnm vnm
 
   #Preparing:
   #Web: cinamonkino.lv
@@ -17,17 +16,20 @@ Feature:
     And I press submit button
     And I check that the Name is "Neo"
     And I check the the Surname is "Tech"
-    # And I press the Save button
-    #And I go to the Films tab
-   # And I select the random date using 3 days interval from current date
-   # And I select the random film from the list
-   # And I select the random time of the film
     And I select the film from the list
     And I choose the time from the list
     And I press booking button
     And I add 2 tickets
+    And I store the sum
     And I type random text in coupon field
     And I press validate button
+    And I check that validation works
+    And I press Next
+    And I check two random at the last row
+    And I store the seat numbers
+    And I press Next again
+    And I check stored sum
+    And I check stored seats
 
 
   #  1. Sign in
