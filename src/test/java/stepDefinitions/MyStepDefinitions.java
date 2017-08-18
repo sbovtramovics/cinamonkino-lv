@@ -32,12 +32,7 @@ public class MyStepDefinitions {
     public MyStepDefinitions(Driver driver) {
         this.driver = driver;
     }
-    Calendar cal0 = Calendar.getInstance();
-    Date date0 = cal0.getTime();
-    SimpleDateFormat ft0 = new SimpleDateFormat("YYYY-MM-dd");
-    String randomDate=ft0.format(date0);
     int randomFilm = 1;
-    int randomTime=1;
     String StoredSum;
     String SeatData;
 
@@ -46,13 +41,11 @@ public class MyStepDefinitions {
         driver.get(page);
     }
 
-
     @When("^I sign in$")
     public void iSignIn() throws Throwable {
             WebElement loginButton = driver.findElement(By.className("username"));
             loginButton.click(); // clicking on button
     }
-
 
     @And("^I enter the email: \"([^\"]*)\"$")
     public void iEnterTheEmail(String email) throws Throwable {
@@ -153,13 +146,17 @@ public class MyStepDefinitions {
         couponField.sendKeys(String.valueOf(new String(text)));
     }
 
-    @And("^I press validate button$")
-    public void iPressValidateButton() throws Throwable {
-        WebElement Button = driver.findElement(By.cssSelector("button.small.secondary.validate"));//#next-step
+    @And("^I scroll down the page$")
+    public void iScrollDownThePage() throws Throwable {
         Robot robot = new Robot();
         robot.keyPress(KeyEvent.VK_PAGE_DOWN);
         robot.keyRelease(KeyEvent.VK_PAGE_DOWN);
         Thread.sleep(1000);
+    }
+
+    @And("^I press validate button$")
+    public void iPressValidateButton() throws Throwable {
+        WebElement Button = driver.findElement(By.cssSelector("button.small.secondary.validate"));//#next-step
         Button.click(); // clicking on button
         Thread.sleep(1000);
     }
@@ -175,13 +172,9 @@ public class MyStepDefinitions {
         buttonNext.click(); // clicking on button
     }
 
-    @And("^I check two random at the last row$")
+    @And("^I check two random seats at the last row$")
     public void iCheckTwoRandomAtTheLastRow() throws Throwable {
         WebElement seat1 = driver.findElement(By.cssSelector(".empty.normal"));
-        Robot robot = new Robot();
-        robot.keyPress(KeyEvent.VK_PAGE_DOWN);
-        robot.keyRelease(KeyEvent.VK_PAGE_DOWN);
-        Thread.sleep(1000);
         seat1.click();
         WebElement seat2 = driver.findElement(By.cssSelector(".empty.normal"));
         seat2.click();
@@ -191,7 +184,9 @@ public class MyStepDefinitions {
     public void iStoreTheSeatNumbers() throws Throwable {
         WebElement seatDataText = driver.findElement(By.cssSelector("div.medium-6.columns.picked-summary li"));
         SeatData=seatDataText.getText();
-        System.out.println("STOP!");
+        SeatData=seatDataText.getText().replaceFirst(",", " -");
+        SeatData=SeatData.replaceFirst("r", "R");
+        //System.out.println("STOP!");
         /*List<WebElement> l= driver.findElements(By.cssSelector(".reserved.normal"));
         int length= l.size();
         int[] seatNumbers = new int[length];
@@ -207,7 +202,6 @@ public class MyStepDefinitions {
     public void iPressNextAgain() throws Throwable {
         WebElement submitButton = driver.findElement(By.cssSelector("input.button.big-submit"));
         submitButton.click();
-        System.out.println("STOP");
     }
 
     @And("^I check stored sum$")
@@ -222,7 +216,31 @@ public class MyStepDefinitions {
         assertEquals(seatDataText.getText(), SeatData);
     }
 
+    @And("^I change the order by clicking change the order button$")
+    public void iChangeTheOrderByClikingChangeTheOrderButton() throws Throwable {
+        WebElement changeOrderButton = driver.findElement(By.cssSelector("a.button.change-btn.light-btn"));
+        changeOrderButton.click();
+    }
+
+    @And("^I check availability of (\\d+) payment methods$")
+    public void iCheckAvailabilityOfPaymentMethods(int methodsCount) throws Throwable {
+        List<WebElement> l= driver.findElements(By.cssSelector("#submit_order_form > ul >*"));
+        assertEquals(l.size(), methodsCount);
+    }
+
+    @And("^I logout$")
+    public void iLogout() throws Throwable {
+        WebElement logoutButton = driver.findElement(By.cssSelector("a.logout"));
+        logoutButton.click();
+    }
+
+    @And("^I do something$")
+    public void iDoSomething() throws Throwable {
+        System.out.println("STOP");
+    }
+
 }
+//System.out.println("STOP");
 //System.out.println("STOP!");
 //System.out.println("STOP!");
 //Thread.sleep(5000);

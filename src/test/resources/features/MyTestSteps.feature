@@ -22,14 +22,29 @@ Feature:
     And I add 2 tickets
     And I store the sum
     And I type random text in coupon field
+    And I scroll down the page
     And I press validate button
     And I check that validation works
     And I press Next
-    And I check two random at the last row
+    And I scroll down the page
+    And I check two random seats at the last row
     And I store the seat numbers
     And I press Next again
     And I check stored sum
     And I check stored seats
+    And I scroll down the page
+    And I change the order by clicking change the order button
+    And I add 1 tickets
+    And I store the sum
+    And I scroll down the page
+    And I press Next
+    And I scroll down the page
+    And I press Next again
+    And I check stored sum
+    And I check availability of 5 payment methods
+    And I logout
+    And I do something
+
 
 
   #  1. Sign in
