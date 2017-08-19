@@ -10,6 +10,7 @@ import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.w3c.css.sac.ElementSelector;
 import util.Driver;
 
 import javax.swing.*;
@@ -26,15 +27,26 @@ import java.awt.Robot;
 import java.awt.event.KeyEvent;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class MyStepDefinitions {
     private Driver driver;
     public MyStepDefinitions(Driver driver) {
         this.driver = driver;
     }
-    int randomFilm = 1;
-    String StoredSum;
-    String SeatData;
+    private String StoredSum;
+    private String SeatData;
+    private String reservedSeatId;
+
+    private int Random(int max, int min) throws Throwable{
+        Random rand = new Random();
+        return rand.nextInt((max - min) + 1) + min;
+    }
+
+    private String[] splitString(String text) throws Throwable{
+        text = text.replace(",","");
+        return text.split(" ");
+    }
 
     @Given("^I go to the main page: \"([^\"]*)\"$")
     public void iGoToTheMainPage(String page) throws Throwable {
@@ -84,10 +96,7 @@ public class MyStepDefinitions {
         Select select = new Select(driver.findElement(By.cssSelector("#quick-booking__film")));
         select.getAllSelectedOptions();
         List<WebElement> l = select.getOptions();
-        Random rand = new Random();
-        int max = l.size()-1;
-        int min = 1;
-        randomFilm = rand.nextInt((max - min) + 1) + min;
+        int randomFilm =  Random(l.size()-1, 1);
         select.selectByIndex(randomFilm);
         Thread.sleep(2000);
 
@@ -97,10 +106,7 @@ public class MyStepDefinitions {
     public void iChooseTheTimeFromTheList() throws Throwable {
         Select select = new Select(driver.findElement(By.cssSelector("#quick-booking__session")));
         List<WebElement> l = select.getOptions();
-        Random rand = new Random();
-        int max = l.size()-1;
-        int min = 2;
-        int randomTimeIndex= rand.nextInt((max - min) + 1) + min;
+        int randomTimeIndex = Random(l.size()-1, 2);
         while (select.getOptions().get(randomTimeIndex).getAttribute("disabled")!=null)
         {
             randomTimeIndex++;
@@ -133,9 +139,7 @@ public class MyStepDefinitions {
     public void iTypeRandomTextInCouponField() throws Throwable {
         Random rng = new Random();
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        int max = 11;
-        int min = 2;
-        int length= rng.nextInt((max - min) + 1) + min;
+        int length= Random(11, 2);
         char[] text = new char[length];
         for (int i = 0; i < length; i++)
         {
@@ -172,12 +176,31 @@ public class MyStepDefinitions {
         buttonNext.click(); // clicking on button
     }
 
-    @And("^I check two random seats at the last row$")
-    public void iCheckTwoRandomAtTheLastRow() throws Throwable {
-        WebElement seat1 = driver.findElement(By.cssSelector(".empty.normal"));
-        seat1.click();
-        WebElement seat2 = driver.findElement(By.cssSelector(".empty.normal"));
-        seat2.click();
+    @And("^I check first random seat at the last row if available$")
+    public void iCheckFirstRandomSeatAtTheLastRowIfAvailable() throws Throwable {
+        List<WebElement> seatList1= driver.findElements(By.cssSelector(".empty.normal[id*='a1-r0-s'], .reserved.normal[id*='a1-r0-s']")); //.empty.normal[id*='a1-r0-s']
+        int seat1;
+        if (seatList1.size()==0)
+        {
+            seatList1= driver.findElements(By.cssSelector(".empty.normal[id*='a1-r'], .reserved.normal[id*='a1-r']"));
+            assertNotEquals(seatList1.size(), 0);
+        }
+        seat1 = Random(seatList1.size()-1, 0);
+        seatList1.get(seat1).click();
+        reservedSeatId=seatList1.get(seat1).getAttribute("id");
+    }
+
+    @And("^I check second random seat at the penult row if available$")
+    public void iCheckSecondRandomSeatAtThePenultRowIfAvailable() throws Throwable {
+        int seat2;
+        List<WebElement> seatList2= driver.findElements(By.cssSelector(".empty.normal[id*='a1-r1-s'], .reserved.normal[id*='a1-r1-s']:not([id='"+reservedSeatId +"'])"));
+        if (seatList2.size()==0)
+        {
+            seatList2= driver.findElements(By.cssSelector(".empty.normal[id*='a1-r'], .reserved.normal[id*='a1-r']:not([id='"+ reservedSeatId +"'])"));
+            assertNotEquals(seatList2.size(), 0);
+        }
+        seat2 = Random(seatList2.size()-1, 0);
+        seatList2.get(seat2).click();
     }
 
     @And("^I store the seat numbers$")
@@ -186,16 +209,6 @@ public class MyStepDefinitions {
         SeatData=seatDataText.getText();
         SeatData=seatDataText.getText().replaceFirst(",", " -");
         SeatData=SeatData.replaceFirst("r", "R");
-        //System.out.println("STOP!");
-        /*List<WebElement> l= driver.findElements(By.cssSelector(".reserved.normal"));
-        int length= l.size();
-        int[] seatNumbers = new int[length];
-        for (int i = 0; i < length; i++)
-        {
-            //seatNumbers[i] =
-            System.out.println(l.get(i).getAttribute("id"));
-        }
-        */
     }
 
     @And("^I press Next again$")
@@ -213,7 +226,18 @@ public class MyStepDefinitions {
     @And("^I check stored seats$")
     public void iCheckStoredSeats() throws Throwable {
         WebElement seatDataText = driver.findElement(By.cssSelector("tbody > tr:nth-child(5) > td"));
-        assertEquals(seatDataText.getText(), SeatData);
+        if (seatDataText.getText().equals(SeatData)) {
+            String[] storedSeatData = splitString(SeatData);
+            String[] currentSeatData = splitString(seatDataText.getText());
+            System.out.println(seatDataText.getText()+ " " + SeatData);
+            System.out.println(currentSeatData[currentSeatData.length-2] + " " + storedSeatData[storedSeatData.length - 2]);
+            System.out.println(currentSeatData[currentSeatData.length - 2] + " " + storedSeatData[storedSeatData.length - 2]);
+            //assertEquals(currentSeatData[currentSeatData.length - 1], storedSeatData[storedSeatData.length - 2]);
+            //assertEquals(currentSeatData[currentSeatData.length - 2], storedSeatData[storedSeatData.length - 1]);
+        } else
+        {
+            assertEquals(seatDataText.getText(), SeatData);
+        }
     }
 
     @And("^I change the order by clicking change the order button$")
@@ -238,8 +262,10 @@ public class MyStepDefinitions {
     public void iDoSomething() throws Throwable {
         System.out.println("STOP");
     }
-
 }
+
+
+//System.out.println("STOP!");
 //System.out.println("STOP");
 //System.out.println("STOP!");
 //System.out.println("STOP!");
@@ -306,3 +332,27 @@ public class MyStepDefinitions {
             randomSeatNumber++;
         }
         select.selectByIndex(randomSeatNumber);*/
+
+//WebElement seat1 = driver.findElement(By.cssSelector(".empty.normal"));
+//seat1.click();
+//WebElement seat2 = driver.findElement(By.cssSelector(".empty.normal"));
+//seat2.click();
+//.empty.normal[id*='a1-r0-s']
+
+
+//while ( Boolean isPresent = driver.findElements(By.cssSelector(".empty.normal[id='a1-r0-s"+i+"']")).size() > 0)
+//{
+//    Boolean isPresent = driver.findElements(By.cssSelector(".empty.normal[id='a1-r0-s"+i+"']")).size() > 0;
+//System.out.println(l.get(i).getAttribute("id"));
+//}//
+
+//System.out.println("STOP!");
+        /*List<WebElement> l= driver.findElements(By.cssSelector(".reserved.normal"));
+        int length= l.size();
+        int[] seatNumbers = new int[length];
+        for (int i = 0; i < length; i++)
+        {
+            //seatNumbers[i] =
+
+        }
+        */

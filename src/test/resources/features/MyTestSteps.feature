@@ -27,7 +27,8 @@ Feature:
     And I check that validation works
     And I press Next
     And I scroll down the page
-    And I check two random seats at the last row
+    And I check first random seat at the last row if available
+    And I check second random seat at the penult row if available
     And I store the seat numbers
     And I press Next again
     And I check stored sum
