@@ -1,15 +1,40 @@
-<?xml version="1.0" encoding="UTF-8"?><testsuite failures="0" name="cucumber.runtime.formatter.JUnitFormatter" skipped="0" tests="1" time="28.862758">
-<testcase classname="Scenarios containing user story: Add New Album" name="New published Album test" time="28.862758">
-<system-out><![CDATA[Given Log in as admin.......................................................passed
-And Click on Photo Gallery button...........................................passed
-When Click on Albums button.................................................passed
-And click on Add New button.................................................passed
-And User input Album name: "Album1".........................................passed
-And User input Slug name: "Fun album".......................................passed
-And User input short description: "Short description".......................passed
-When User choses published option: "Yes"....................................passed
-When User clicks on preview image...........................................passed
-And User adds chosen picture................................................passed
+<?xml version="1.0" encoding="UTF-8"?><testsuite failures="0" name="cucumber.runtime.formatter.JUnitFormatter" skipped="0" tests="1" time="34.571664">
+<testcase classname="" name="" time="34.571664">
+<system-out><![CDATA[Given I go to the main page: "https://cinamonkino.lv/"......................passed
+When I sign in..............................................................passed
+And I enter the email: "sbovtramovics@mailinator.com".......................passed
+And I enter the password: "zxcvasdf"........................................passed
+And I press submit button...................................................passed
+And I check that the Name is "Neo"..........................................passed
+And I check the the Surname is "Tech".......................................passed
+And I select the film from the list.........................................passed
+And I choose the time from the list.........................................passed
+And I press booking button..................................................passed
+And I add 2 tickets.........................................................passed
+And I store the sum.........................................................passed
+And I type random text in coupon field......................................passed
+And I scroll down the page..................................................passed
+And I press validate button.................................................passed
+And I check that validation works...........................................passed
+And I press Next............................................................passed
+And I scroll down the page..................................................passed
+And I check first random seat at the last row if available..................passed
+And I check second random seat at the penult row if available...............passed
+And I store the seat numbers................................................passed
+And I press Next again......................................................passed
+And I check stored sum......................................................passed
+And I check stored seats....................................................passed
+And I scroll down the page..................................................passed
+And I change the order by clicking change the order button..................passed
+And I add 1 tickets.........................................................passed
+And I store the sum.........................................................passed
+And I scroll down the page..................................................passed
+And I press Next............................................................passed
+And I scroll down the page..................................................passed
+And I press Next again......................................................passed
+And I check stored sum......................................................passed
+And I check availability of 5 payment methods...............................passed
+And I logout................................................................passed
 ]]></system-out>
 </testcase>
 </testsuite>

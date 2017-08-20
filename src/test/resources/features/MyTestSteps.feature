@@ -44,7 +44,6 @@ Feature:
     And I check stored sum
     And I check availability of 5 payment methods
     And I logout
-    And I do something
 
 
 
