@@ -1,6 +1,4 @@
 package stepDefinitions;
-
-import java.security.SecureRandom;
 import java.util.Random;
 
 import cucumber.api.PendingException;
@@ -9,25 +7,14 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.w3c.css.sac.ElementSelector;
 import util.Driver;
-
-import javax.swing.*;
-import java.security.SecureRandom;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
 import java.util.List;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.JavascriptExecutor;
-import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class MyStepDefinitions {
     private Driver driver;
@@ -35,7 +22,7 @@ public class MyStepDefinitions {
         this.driver = driver;
     }
     private String StoredSum;
-    private String SeatData;
+    private String [][] SeatData;
     private String reservedSeatId;
 
     private int Random(int max, int min) throws Throwable{
@@ -44,8 +31,12 @@ public class MyStepDefinitions {
     }
 
     private String[] splitString(String text) throws Throwable{
+        text = text.replaceFirst(",", " -");
+        text = text.replaceFirst("r", "R");
         text = text.replace(",","");
-        return text.split(" ");
+        String [] returnValue = text.split(" ");
+        ArrayUtils.reverse(returnValue);
+        return returnValue;
     }
 
     @Given("^I go to the main page: \"([^\"]*)\"$")
@@ -205,10 +196,16 @@ public class MyStepDefinitions {
 
     @And("^I store the seat numbers$")
     public void iStoreTheSeatNumbers() throws Throwable {
-        WebElement seatDataText = driver.findElement(By.cssSelector("div.medium-6.columns.picked-summary li"));
-        SeatData=seatDataText.getText();
-        SeatData=seatDataText.getText().replaceFirst(",", " -");
-        SeatData=SeatData.replaceFirst("r", "R");
+        List<WebElement> SeatDataList = driver.findElements(By.cssSelector("div.medium-6.columns.picked-summary > ul >*"));
+        assertNotEquals(SeatDataList.size(), 0);
+        String [] seatDataRow;
+        SeatData = new String [SeatDataList.size()][2];
+        for(int i = 0; i < SeatDataList.size(); i++){
+            seatDataRow = splitString(SeatDataList.get(i).getText());
+            for(int k = 0; k < 2; k++) {
+                SeatData[i][k] = seatDataRow[k];
+            }
+        }
     }
 
     @And("^I press Next again$")
@@ -225,18 +222,14 @@ public class MyStepDefinitions {
 
     @And("^I check stored seats$")
     public void iCheckStoredSeats() throws Throwable {
-        WebElement seatDataText = driver.findElement(By.cssSelector("tbody > tr:nth-child(5) > td"));
-        if (seatDataText.getText().equals(SeatData)) {
-            String[] storedSeatData = splitString(SeatData);
-            String[] currentSeatData = splitString(seatDataText.getText());
-            System.out.println(seatDataText.getText()+ " " + SeatData);
-            System.out.println(currentSeatData[currentSeatData.length-2] + " " + storedSeatData[storedSeatData.length - 2]);
-            System.out.println(currentSeatData[currentSeatData.length - 2] + " " + storedSeatData[storedSeatData.length - 2]);
-            //assertEquals(currentSeatData[currentSeatData.length - 1], storedSeatData[storedSeatData.length - 2]);
-            //assertEquals(currentSeatData[currentSeatData.length - 2], storedSeatData[storedSeatData.length - 1]);
-        } else
-        {
-            assertEquals(seatDataText.getText(), SeatData);
+        List<WebElement> seatDataList = driver.findElements(By.cssSelector("tr.ticket-row:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)) > td")); //tbody > tr:nth-child(5) > td tbody>
+        assertNotEquals(seatDataList.size(), 0);
+        String [] seatDataRow;
+        for(int i = 0; i < seatDataList.size(); i++){
+            seatDataRow = splitString(seatDataList.get(i).getText());
+            for(int k = 0; k < 2; k++) {
+                assertEquals(seatDataRow[k],SeatData[i][k]);
+            }
         }
     }
 
@@ -247,9 +240,9 @@ public class MyStepDefinitions {
     }
 
     @And("^I check availability of (\\d+) payment methods$")
-    public void iCheckAvailabilityOfPaymentMethods(int methodsCount) throws Throwable {
+    public void iCheckAvailabilityOfPaymentMethods(int paymentMethodsCount) throws Throwable {
         List<WebElement> l= driver.findElements(By.cssSelector("#submit_order_form > ul >*"));
-        assertEquals(l.size(), methodsCount);
+        assertEquals(l.size(), paymentMethodsCount);
     }
 
     @And("^I logout$")
@@ -265,6 +258,20 @@ public class MyStepDefinitions {
 }
 
 
+
+        /*for(int i = 0; i < seatDataList.size(); i++){
+            for(int k = 0; k < 2; k++) {
+                if(!CurrrentSeatData[i][k].equals(SeatData[i][k])){
+                    fail();
+                    CurrrentSeatData[i][k] = seatDataRow[k];
+                     //String [][] CurrrentSeatData = new String [seatDataList.size()][2];
+                }
+            }
+        }*/
+//if(CurrrentSeatData[i][k].equals("sēdvieta") || SeatData[i][k].equals("sēdvieta")){
+//}
+//System.out.println("For i run "+i+"times");
+//System.out.println("For k run "+k+"times");
 //System.out.println("STOP!");
 //System.out.println("STOP");
 //System.out.println("STOP!");
@@ -356,3 +363,26 @@ public class MyStepDefinitions {
 
         }
         */
+
+// assertEquals(seatDataText.size(), seatDataText.size());
+       /* for(int i = 0; i < seatDataText.size(); i++){
+
+        }
+
+        if (seatDataText.getText().equals(SeatData)) {
+            String[] storedSeatData = splitString(SeatData);
+            //String[] currentSeatData = splitString(seatDataText.getText());
+            //System.out.println(seatDataText.getText()+ " " + SeatData);
+            //System.out.println(currentSeatData[currentSeatData.length-2] + " " + storedSeatData[storedSeatData.length - 2]);
+            //System.out.println(currentSeatData[currentSeatData.length - 2] + " " + storedSeatData[storedSeatData.length - 2]);
+            //assertEquals(currentSeatData[currentSeatData.length - 1], storedSeatData[storedSeatData.length - 2]);
+            //assertEquals(currentSeatData[currentSeatData.length - 2], storedSeatData[storedSeatData.length - 1]);
+        } else
+        {
+            assertEquals(seatDataText.getText(), SeatData);
+        }*/
+// SeatData.get(i) = splitString(SeatData.get(i));
+//WebElement seatDataText = driver.findElement(By.cssSelector("div.medium-6.columns.picked-summary > ul >*")); //div.medium-6.columns.picked-summary li
+//SeatData=seatDataText.getText();
+//SeatData=seatDataText.getText().replaceFirst(",", " -");
+//SeatData=SeatData.replaceFirst("r", "R");
